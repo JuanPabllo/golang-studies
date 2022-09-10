@@ -101,7 +101,6 @@ func ListarUsuarios(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Erro ao converter o usuario para json"))
 		return
 	}
-
 }
 
 func ListarUsuarioPorid(w http.ResponseWriter, r *http.Request) {

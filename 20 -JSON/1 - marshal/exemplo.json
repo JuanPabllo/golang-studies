@@ -1,0 +1,14 @@
+{
+  "nome": "Juan",
+  "idade": 20,
+  "cursos": [
+    {
+      "nome": "Java",
+      "horas": 40
+    },
+    {
+      "nome": "Python",
+      "horas": 20
+    }
+  ]
+}

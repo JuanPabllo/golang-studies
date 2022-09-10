@@ -22,7 +22,6 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var usuario usuario
-
 	if erro = json.Unmarshal(corpoRequsisao, &usuario); erro != nil {
 		w.Write([]byte("Erro ao converter o corpo da requisicao para struct"))
 		return
@@ -37,7 +36,6 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	statement, erro := db.Prepare("insert into usuarios (nome, email) values (?, ?)")
-
 	if erro != nil {
 		w.Write([]byte("Erro ao preparar o statement"))
 		return
@@ -68,4 +66,44 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(respostaJSON))
+}
+
+func ListarUsuarios(w http.ResponseWriter, r *http.Request) {
+	db, erro := banco.Conectar()
+	if erro != nil {
+		w.Write([]byte("Erro ao conectar ao banco de dados"))
+		return
+	}
+	defer db.Close()
+
+	linhas, erro := db.Query("select id, nome, email from usuarios")
+	if erro != nil {
+		w.Write([]byte("Erro ao buscar usuarios"))
+		return
+	}
+	defer linhas.Close()
+
+	var usuarios []usuario
+
+	for linhas.Next() {
+		var usuario usuario
+
+		if erro := linhas.Scan(&usuario.ID, &usuario.Nome, &usuario.Email); erro != nil {
+			w.Write([]byte("Erro ao ler o usuario"))
+			return
+		}
+
+		usuarios = append(usuarios, usuario)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if erro := json.NewEncoder(w).Encode(usuarios); erro != nil {
+		w.Write([]byte("Erro ao converter o usuario para json"))
+		return
+	}
+
+}
+
+func ListarUsuarioPorid(w http.ResponseWriter, r *http.Request) {
+
 }
